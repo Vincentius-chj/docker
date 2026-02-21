@@ -1,0 +1,41 @@
+server:
+  port: 8123
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: chj-ai-agent
+  profiles:
+    active: local
+  datasource:
+    driver-class-name: ${spring.datasource.driver-class-name}
+    url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+  ai:
+    dashscope:
+      api-key: ${spring.ai.dashscope.api-key}
+      chat:
+        options:
+          model: qwen3.5-plus
+          # 启用多模态
+          multi-model: true
+          extra-body:
+            # 启用音频输出
+            enable_omni_output_audio_url: true
+            # 启用增量输出（qewn3.5-plus)
+            incremental_output: true
+    deepseek:
+      api-key: ${spring.ai.deepseek.api-key}
+      chat:
+        options:
+          model: deepseek-reasoner
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: llava
+    chat:
+      client:
+        # 禁用自动配置 ChatClient
+        enabled: false
