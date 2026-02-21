@@ -10,10 +10,24 @@ import lombok.Data;
 @Data
 public class ActorFilms {
 
-    private String actorName; // 演员姓名
-    private String filmTitle; // 电影标题
-    private int releaseYear; // 电影上映年份
-    private String genre; // 电影类型
+    /**
+     * 演员姓名
+     */
+    private String actorName;
 
+    /**
+     * 电影标题
+     */
+    private String filmTitle;
+
+    /**
+     * 电影发布年份
+     */
+    private int releaseYear;
+
+    /**
+     * 电影类型
+     */
+    private String genre;
 
 }
