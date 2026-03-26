@@ -48,7 +48,7 @@ public final class MySqlChatMemoryRepository implements ChatMemoryRepository {
     @Override
     public void saveAll(@NotNull String conversationId, @NotNull List<org.springframework.ai.chat.messages.Message> messages) {
         List<Message> tMessages = messages.stream().map(message -> {
-            Message.TMessageBuilder tMessageBuilder = Message.builder()
+            Message.MessageBuilder tMessageBuilder = Message.builder()
                     .chatId(conversationId)
                     .messageType(message.getMessageType().getValue())
                     .message(message.getText());

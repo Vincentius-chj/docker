@@ -1,4 +1,9 @@
 package com.chj.service;
 
-public interface ProblemCategoryService extends BaseService<ProblemAnalysis> {
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.chj.entity.model.ProblemCategory;
+
+public interface ProblemCategoryService extends IService<ProblemCategory> {
+
+    ProblemCategory problemAnalysis(String problem);
 }
