@@ -67,4 +67,15 @@ class AdvisorsDemoTest {
         System.out.println(response);
         assertNotNull(response);
     }
+
+    /**
+     * 测试 SimpleVectorStore 的用法
+     */
+    @Test
+    void client6() {
+        String chatId = UUID.randomUUID().toString(true);
+        String response = advisorsDemo.client6("什么是 SimpleVectorStore？", chatId);
+        System.out.println(response);
+        assertNotNull(response);
+    }
 }

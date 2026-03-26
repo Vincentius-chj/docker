@@ -11,6 +11,7 @@ import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvi
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.content.Media;
+import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,8 @@ public class AdvisorsDemo {
     private VectorStore dashScopeCloudVectorStore;
     @Resource
     private DashScopeConnectionProperties dashScopeConnectionProperties;
+    @Resource
+    private SimpleVectorStore simpleVectorStore;
 
     public String client1(String message, String chatId) {
         return dashScopeChatClient.prompt()
@@ -86,6 +89,18 @@ public class AdvisorsDemo {
                 .advisors(advisorSpec -> {
                     advisorSpec.param(ChatMemory.CONVERSATION_ID, chatId);
                 })
+                .call()
+                .content();
+    }
+
+    /**
+     * 使用 SimpleVectorStore 的示例
+     * SimpleVectorStore 是一个简单的内存向量存储，适合开发和测试使用
+     */
+    public String client6(String message, String chatId) {
+        return dashScopeChatClient.prompt()
+                .user(message)
+                .advisors(QuestionAnswerAdvisor.builder(simpleVectorStore).build())
                 .call()
                 .content();
     }

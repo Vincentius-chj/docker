@@ -14,7 +14,7 @@ import lombok.Builder;
 @AllArgsConstructor
 @Builder
 @TableName("t_message")
-public class TMessage {
+public class Message {
 
     /**
      * 主键 ID

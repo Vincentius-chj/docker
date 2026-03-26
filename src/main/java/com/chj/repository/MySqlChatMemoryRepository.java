@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.chj.entity.model.TMessage;
+import com.chj.entity.model.Message;
 import com.chj.mapper.MessageMapper;
 import jakarta.annotation.Resource;
 import org.jetbrains.annotations.NotNull;
@@ -28,17 +28,17 @@ public final class MySqlChatMemoryRepository implements ChatMemoryRepository {
     @NotNull
     @Override
     public List<String> findConversationIds() {
-        List<TMessage> messages = messageMapper.selectList(new LambdaQueryWrapper<>());
+        List<Message> messages = messageMapper.selectList(new LambdaQueryWrapper<>());
         if (CollUtil.isEmpty(messages)) {
             return CollUtil.newArrayList();
         }
-        return messages.stream().map(TMessage::getMessage).toList();
+        return messages.stream().map(Message::getMessage).toList();
     }
 
     @NotNull
     @Override
-    public List<Message> findByConversationId(@NotNull String conversationId) {
-        List<TMessage> messages = messageMapper.selectList(new LambdaQueryWrapper<TMessage>().eq(TMessage::getChatId, conversationId));
+    public List<org.springframework.ai.chat.messages.Message> findByConversationId(@NotNull String conversationId) {
+        List<Message> messages = messageMapper.selectList(new LambdaQueryWrapper<Message>().eq(Message::getChatId, conversationId));
         if (CollUtil.isEmpty(messages)) {
             return CollUtil.newArrayList();
         }
@@ -46,9 +46,9 @@ public final class MySqlChatMemoryRepository implements ChatMemoryRepository {
     }
 
     @Override
-    public void saveAll(@NotNull String conversationId, @NotNull List<Message> messages) {
-        List<TMessage> tMessages = messages.stream().map(message -> {
-            TMessage.TMessageBuilder tMessageBuilder = TMessage.builder()
+    public void saveAll(@NotNull String conversationId, @NotNull List<org.springframework.ai.chat.messages.Message> messages) {
+        List<Message> tMessages = messages.stream().map(message -> {
+            Message.TMessageBuilder tMessageBuilder = Message.builder()
                     .chatId(conversationId)
                     .messageType(message.getMessageType().getValue())
                     .message(message.getText());
@@ -77,13 +77,13 @@ public final class MySqlChatMemoryRepository implements ChatMemoryRepository {
 
     @Override
     public void deleteByConversationId(@NotNull String conversationId) {
-        messageMapper.delete(new LambdaQueryWrapper<TMessage>().eq(TMessage::getChatId, conversationId));
+        messageMapper.delete(new LambdaQueryWrapper<Message>().eq(Message::getChatId, conversationId));
     }
 
     /**
      * 将 TMessage 转换为对应的 Message 对象
      */
-    private Message convertToMessage(TMessage message) {
+    private org.springframework.ai.chat.messages.Message convertToMessage(Message message) {
         MessageType messageType = MessageType.fromValue(message.getMessageType());
         return switch (messageType) {
             case MessageType.USER -> UserMessage.builder()
