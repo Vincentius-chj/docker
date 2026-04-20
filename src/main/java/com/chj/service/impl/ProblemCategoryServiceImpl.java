@@ -4,27 +4,44 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chj.entity.model.ProblemCategory;
 import com.chj.mapper.ProblemCategoryMapper;
 import com.chj.service.ProblemCategoryService;
-import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ProblemCategoryServiceImpl extends ServiceImpl<ProblemCategoryMapper, ProblemCategory> implements ProblemCategoryService  {
 
-    @Resource
-    private ChatClient dashScopeChatClient;
+    private final ChatClient dashScopeChatClient;
+
+    // 从外部文件加载系统提示词模板
+    @Value("classpath:/templates/cause-analysis-system.prompt")
+    private Resource systemPromptTemplate;
+
+    // 从外部文件加载用户提示词模板
+    @Value("classpath:/templates/cause-analysis-user.prompt")
+    private Resource userPromptTemplate;
 
     @Override
     public ProblemCategory problemAnalysis(String problem) {
         List<ProblemCategory> problemCategories = list();
-        String message = "你是一名原因分析师，接下来我给出内容和所有的原因分类，你帮我进行归因，" +
-                "也就是在原因分类集合中找到最符合内容的原因，最后返回该原因分类的信息即可。" +
-                "内容：" + problem + "原因分类集合：" + problemCategories +
-                "，如果实在无法确定，也要找到最符合原因分类下的一个‘其他’。";
+
+        // 渲染用户提示词，绑定变量
+        PromptTemplate userTemplate = new PromptTemplate(userPromptTemplate);
+        String userText = userTemplate.create(Map.of(
+                "problem", problem,
+                "categories", problemCategories.toString()
+        )).getContents();
+
         return dashScopeChatClient.prompt()
-                .user(message)
+                .system(systemPromptTemplate)
+                .user(userText)
                 .call()
                 .entity(ProblemCategory.class);
     }

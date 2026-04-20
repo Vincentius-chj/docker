@@ -16,7 +16,7 @@ class ProblemCategoryServiceImplTest {
 
     @Test
     void problemAnalysis() {
-        ProblemCategory problemCategory = problemCategoryService.problemAnalysis("这猪肉一点也不新鲜，都臭了！！！");
+        ProblemCategory problemCategory = problemCategoryService.problemAnalysis("没货了");
         System.out.println(problemCategory);
     }
 }
