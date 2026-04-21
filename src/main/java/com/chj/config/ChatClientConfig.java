@@ -28,6 +28,7 @@ public class ChatClientConfig {
                         .maxMessages(20)
                         .build()
                 )
+
                 .build();
         return ChatClient.builder(chatModel)
                 .defaultAdvisors(messageChatMemoryAdvisor, new MyLoggerAdvisor())
